@@ -39,9 +39,16 @@ func NewShortlyAPI(spec *loads.Document) *ShortlyAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
-		UrlsListURLsHandler: urls.ListURLsHandlerFunc(func(params urls.ListURLsParams) middleware.Responder {
+		UrlsListURLsHandler: urls.ListURLsHandlerFunc(func(params urls.ListURLsParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation UrlsListURLs has not yet been implemented")
 		}),
+
+		HasRoleAuth: func(token string, scopes []string) (interface{}, error) {
+			return nil, errors.NotImplemented("oauth2 bearer auth (hasRole) has not yet been implemented")
+		},
+
+		// default authorizer is authorized meaning no requests are blocked
+		APIAuthorizer: security.Authorized(),
 	}
 }
 
@@ -72,6 +79,13 @@ type ShortlyAPI struct {
 
 	// JSONProducer registers a producer for a "application/io.goswagger.examples.todo-list.v1+json" mime type
 	JSONProducer runtime.Producer
+
+	// HasRoleAuth registers a function that takes an access token and a collection of required scopes and returns a principal
+	// it performs authentication based on an oauth2 bearer token provided in the request
+	HasRoleAuth func(string, []string) (interface{}, error)
+
+	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
+	APIAuthorizer runtime.Authorizer
 
 	// UrlsListURLsHandler sets the operation handler for the list u r ls operation
 	UrlsListURLsHandler urls.ListURLsHandler
@@ -138,6 +152,10 @@ func (o *ShortlyAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.HasRoleAuth == nil {
+		unregistered = append(unregistered, "HasRoleAuth")
+	}
+
 	if o.UrlsListURLsHandler == nil {
 		unregistered = append(unregistered, "urls.ListURLsHandler")
 	}
@@ -157,14 +175,24 @@ func (o *ShortlyAPI) ServeErrorFor(operationID string) func(http.ResponseWriter,
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *ShortlyAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 
-	return nil
+	result := make(map[string]runtime.Authenticator)
+	for name := range schemes {
+		switch name {
+
+		case "hasRole":
+
+			result[name] = o.BearerAuthenticator(name, o.HasRoleAuth)
+
+		}
+	}
+	return result
 
 }
 
 // Authorizer returns the registered authorizer
 func (o *ShortlyAPI) Authorizer() runtime.Authorizer {
 
-	return nil
+	return o.APIAuthorizer
 
 }
 

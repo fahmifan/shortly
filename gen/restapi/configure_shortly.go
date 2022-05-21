@@ -8,10 +8,8 @@ import (
 
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
-	middleware "github.com/go-openapi/runtime/middleware"
 
 	"github.com/fahmifan/shortly/gen/restapi/operations"
-	"github.com/fahmifan/shortly/gen/restapi/operations/urls"
 )
 
 //go:generate swagger generate server --target ../../gen --name Shortly --spec ../../swagger.yml --exclude-main
@@ -33,12 +31,6 @@ func configureAPI(api *operations.ShortlyAPI) http.Handler {
 	api.JSONConsumer = runtime.JSONConsumer()
 
 	api.JSONProducer = runtime.JSONProducer()
-
-	if api.UrlsListURLsHandler == nil {
-		api.UrlsListURLsHandler = urls.ListURLsHandlerFunc(func(params urls.ListURLsParams) middleware.Responder {
-			return middleware.NotImplemented("operation urls.ListURLs has not yet been implemented")
-		})
-	}
 
 	api.ServerShutdown = func() {}
 

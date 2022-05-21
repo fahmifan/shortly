@@ -36,6 +36,13 @@ func init() {
   "paths": {
     "/urls": {
       "get": {
+        "security": [
+          {
+            "hasRole": [
+              "customer"
+            ]
+          }
+        ],
         "tags": [
           "urls"
         ],
@@ -90,6 +97,20 @@ func init() {
         }
       }
     },
+    "principal": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "url": {
       "type": "object",
       "required": [
@@ -110,6 +131,17 @@ func init() {
         "shorten": {
           "type": "string"
         }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "hasRole": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://example.com/oauth/authorize",
+      "tokenUrl": "https://example.com/oauth/token",
+      "scopes": {
+        "customer": "scope of registered customer"
       }
     }
   }
@@ -133,6 +165,13 @@ func init() {
   "paths": {
     "/urls": {
       "get": {
+        "security": [
+          {
+            "hasRole": [
+              "customer"
+            ]
+          }
+        ],
         "tags": [
           "urls"
         ],
@@ -187,6 +226,20 @@ func init() {
         }
       }
     },
+    "principal": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "url": {
       "type": "object",
       "required": [
@@ -207,6 +260,17 @@ func init() {
         "shorten": {
           "type": "string"
         }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "hasRole": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://example.com/oauth/authorize",
+      "tokenUrl": "https://example.com/oauth/token",
+      "scopes": {
+        "customer": "scope of registered customer"
       }
     }
   }

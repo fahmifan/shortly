@@ -9,10 +9,20 @@ produces:
 schemes:
 - http
 swagger: "2.0"
+securityDefinitions:
+  hasRole:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: https://example.com/oauth/authorize
+    tokenUrl: https://example.com/oauth/token
+    scopes:
+      customer: scope of registered customer
 paths:
   /urls:
     get:
       operationId: listURLs
+      security:
+        - hasRole: [ customer ]
       tags:
         - urls
       parameters:
@@ -46,6 +56,15 @@ definitions:
         format: int32
       message:
         type: string
+  principal:
+    type: object 
+    properties: 
+      name: 
+        type: string
+      roles:
+        type: array 
+        items: 
+          type: string
   url:
     type: object
     required:
