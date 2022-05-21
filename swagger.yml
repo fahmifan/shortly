@@ -1,0 +1,63 @@
+consumes:
+- application/io.goswagger.examples.todo-list.v1+json
+info:
+  description: Shortly is a URL Shortener
+  title: Shortly
+  version: 1.0.0
+produces:
+- application/io.goswagger.examples.todo-list.v1+json
+schemes:
+- http
+swagger: "2.0"
+paths:
+  /urls:
+    get:
+      operationId: listURLs
+      tags:
+        - urls
+      parameters:
+        - name: since
+          in: query
+          type: string
+        - name: limit
+          in: query
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        200:
+          description: list shorten urls
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/url"
+        default:
+          description: generic error response
+          schema:
+            $ref: "#/definitions/error"
+definitions:
+  error:
+    type: object
+    required:
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  url:
+    type: object
+    required:
+      - original
+      - isPublic
+    properties:
+      id:
+        type: string
+        readOnly: true
+      original:
+        type: string
+      shorten:
+        type: string
+      isPublic:
+        type: boolean
