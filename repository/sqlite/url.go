@@ -7,8 +7,7 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/fahmifan/shortly/ulids"
-	"github.com/oklog/ulid"
+	"github.com/fahmifan/ulids"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -89,29 +88,19 @@ func (u *URLRepository) scanRows(rows *sql.Rows) (urls []URL, err error) {
 }
 
 func (u *URLRepository) Create(ctx context.Context, url *URL) error {
-	_, err := u.DB.ExecContext(ctx, `--sql
-		INSERT INTO urls (
-			id, 
-			is_public, 
-			original, 
-			shorten, 
-			created_by, 
-			updated_by, 
-			created_at, 
-			updated_at, 
-			deleted_at
-		) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		url.ID,
-		url.IsPublic,
-		url.Original,
-		url.Shorten,
-		url.CreatedBy,
-		url.UpdatedBy,
-		url.CreatedAt,
-		url.UpdatedAt,
-		url.DeletedAt,
-	)
+	_, err := sq.Insert("urls").Columns(u.columns()...).
+		RunWith(u.DB).
+		Values(
+			"id", url.ID,
+			"is_public", url.IsPublic,
+			"original", url.Original,
+			"shorten", url.Shorten,
+			"created_by", url.CreatedBy,
+			"updated_by", url.UpdatedBy,
+			"created_at", url.CreatedAt,
+			"updated_at", url.UpdatedAt,
+		).
+		ExecContext(ctx)
 	if err != nil {
 		return fmt.Errorf("create urls: %w", err)
 	}
@@ -120,7 +109,7 @@ func (u *URLRepository) Create(ctx context.Context, url *URL) error {
 }
 
 type ListFilter struct {
-	Cursor ulid.ULID
+	Cursor ulids.ULID
 }
 
 func (u *URLRepository) ListByUserID(ctx context.Context, userID ulids.ULID, filter ListFilter) ([]URL, error) {

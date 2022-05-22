@@ -16,7 +16,7 @@ require (
 	github.com/jxskiss/base62 v1.1.0
 	github.com/oklog/ulid v1.3.1
 	github.com/rs/zerolog v1.26.1
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.7.1
 	golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2
 	gopkg.in/guregu/null.v4 v4.0.0
 	modernc.org/sqlite v1.17.2
@@ -26,6 +26,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
+	github.com/fahmifan/ulids v0.0.0-20220522023455-6a80cb26812f // indirect
 	github.com/go-openapi/analysis v0.21.2 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.20.0 // indirect
