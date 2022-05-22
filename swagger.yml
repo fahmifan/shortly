@@ -1,0 +1,119 @@
+consumes:
+- application/io.goswagger.examples.todo-list.v1+json
+info:
+  description: Shortly is a URL Shortener
+  title: Shortly
+  version: 1.0.0
+produces:
+- application/io.goswagger.examples.todo-list.v1+json
+schemes:
+- http
+swagger: "2.0"
+securityDefinitions:
+  hasRole:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: https://example.com/oauth/authorize
+    tokenUrl: https://example.com/oauth/token
+    scopes:
+      customer: scope of registered customer
+paths:
+  /urls:
+    post:
+      operationId: createURL
+      consumes:
+        - application/json
+      tags:
+        - urls
+      parameters:
+        - in: body
+          name: url
+          description: the url
+          schema:
+            type: object
+            required:
+              - original
+              - isPublic
+              - shorten
+            properties:
+              original:
+                type: string
+              isPublic:
+                type: boolean
+              shorten:
+                type: string
+      responses:
+        200:
+          description: ok
+          schema:
+            $ref: '#/definitions/URL'
+        500:
+          description: internal error
+          schema:
+            $ref: "#/definitions/Error"
+    get:
+      operationId: listURLs
+      tags:
+        - urls
+      parameters:
+        - name: since
+          in: query
+          type: string
+        - name: limit
+          in: query
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        200:
+          description: list shorten urls
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/URL"
+        default:
+          description: generic error response
+          schema:
+            $ref: "#/definitions/Error"
+definitions:
+  Error:
+    type: object
+    required:
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  principal:
+    type: object 
+    properties: 
+      name: 
+        type: string
+      roles:
+        type: array 
+        items: 
+          type: string
+  URL:
+    type: object
+    required:
+      - original
+      - isPublic
+      - shorten
+    properties:
+      id:
+        type: string
+        readOnly: true
+      original:
+        type: string
+      shorten:
+        type: string
+      isPublic:
+        type: boolean
+      createdAt:
+        type: string
+        readOnly: true
+      updatedAt:
+        type: string
+        readOnly: true
