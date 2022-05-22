@@ -39,16 +39,12 @@ func NewShortlyAPI(spec *loads.Document) *ShortlyAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
-		UrlsListURLsHandler: urls.ListURLsHandlerFunc(func(params urls.ListURLsParams, principal interface{}) middleware.Responder {
+		UrlsCreateURLHandler: urls.CreateURLHandlerFunc(func(params urls.CreateURLParams) middleware.Responder {
+			return middleware.NotImplemented("operation UrlsCreateURL has not yet been implemented")
+		}),
+		UrlsListURLsHandler: urls.ListURLsHandlerFunc(func(params urls.ListURLsParams) middleware.Responder {
 			return middleware.NotImplemented("operation UrlsListURLs has not yet been implemented")
 		}),
-
-		HasRoleAuth: func(token string, scopes []string) (interface{}, error) {
-			return nil, errors.NotImplemented("oauth2 bearer auth (hasRole) has not yet been implemented")
-		},
-
-		// default authorizer is authorized meaning no requests are blocked
-		APIAuthorizer: security.Authorized(),
 	}
 }
 
@@ -80,13 +76,8 @@ type ShortlyAPI struct {
 	// JSONProducer registers a producer for a "application/io.goswagger.examples.todo-list.v1+json" mime type
 	JSONProducer runtime.Producer
 
-	// HasRoleAuth registers a function that takes an access token and a collection of required scopes and returns a principal
-	// it performs authentication based on an oauth2 bearer token provided in the request
-	HasRoleAuth func(string, []string) (interface{}, error)
-
-	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
-	APIAuthorizer runtime.Authorizer
-
+	// UrlsCreateURLHandler sets the operation handler for the create URL operation
+	UrlsCreateURLHandler urls.CreateURLHandler
 	// UrlsListURLsHandler sets the operation handler for the list u r ls operation
 	UrlsListURLsHandler urls.ListURLsHandler
 
@@ -152,8 +143,8 @@ func (o *ShortlyAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.HasRoleAuth == nil {
-		unregistered = append(unregistered, "HasRoleAuth")
+	if o.UrlsCreateURLHandler == nil {
+		unregistered = append(unregistered, "urls.CreateURLHandler")
 	}
 
 	if o.UrlsListURLsHandler == nil {
@@ -175,24 +166,14 @@ func (o *ShortlyAPI) ServeErrorFor(operationID string) func(http.ResponseWriter,
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *ShortlyAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 
-	result := make(map[string]runtime.Authenticator)
-	for name := range schemes {
-		switch name {
-
-		case "hasRole":
-
-			result[name] = o.BearerAuthenticator(name, o.HasRoleAuth)
-
-		}
-	}
-	return result
+	return nil
 
 }
 
 // Authorizer returns the registered authorizer
 func (o *ShortlyAPI) Authorizer() runtime.Authorizer {
 
-	return o.APIAuthorizer
+	return nil
 
 }
 
@@ -205,6 +186,9 @@ func (o *ShortlyAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consum
 
 		case "application/io.goswagger.examples.todo-list.v1+json":
 			result["application/io.goswagger.examples.todo-list.v1+json"] = o.JSONConsumer
+
+		case "application/json":
+			result["application/json"] = o.JSONConsumer
 
 		}
 
@@ -267,6 +251,11 @@ func (o *ShortlyAPI) initHandlerCache() {
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/urls"] = urls.NewCreateURL(o.context, o.UrlsCreateURLHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

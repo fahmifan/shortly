@@ -13,9 +13,13 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// URL url
-// swagger:model url
+// URL URL
+// swagger:model URL
 type URL struct {
+
+	// created at
+	// Read Only: true
+	CreatedAt string `json:"createdAt,omitempty"`
 
 	// id
 	// Read Only: true
@@ -30,10 +34,15 @@ type URL struct {
 	Original *string `json:"original"`
 
 	// shorten
-	Shorten string `json:"shorten,omitempty"`
+	// Required: true
+	Shorten *string `json:"shorten"`
+
+	// updated at
+	// Read Only: true
+	UpdatedAt string `json:"updatedAt,omitempty"`
 }
 
-// Validate validates this url
+// Validate validates this URL
 func (m *URL) Validate(formats strfmt.Registry) error {
 	var res []error
 
@@ -42,6 +51,10 @@ func (m *URL) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateOriginal(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateShorten(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -63,6 +76,15 @@ func (m *URL) validateIsPublic(formats strfmt.Registry) error {
 func (m *URL) validateOriginal(formats strfmt.Registry) error {
 
 	if err := validate.Required("original", "body", m.Original); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *URL) validateShorten(formats strfmt.Registry) error {
+
+	if err := validate.Required("shorten", "body", m.Shorten); err != nil {
 		return err
 	}
 

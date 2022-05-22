@@ -36,13 +36,6 @@ func init() {
   "paths": {
     "/urls": {
       "get": {
-        "security": [
-          {
-            "hasRole": [
-              "customer"
-            ]
-          }
-        ],
         "tags": [
           "urls"
         ],
@@ -67,14 +60,63 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/url"
+                "$ref": "#/definitions/URL"
               }
             }
           },
           "default": {
             "description": "generic error response",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "urls"
+        ],
+        "operationId": "createURL",
+        "parameters": [
+          {
+            "description": "the url",
+            "name": "url",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "original",
+                "isPublic",
+                "shorten"
+              ],
+              "properties": {
+                "isPublic": {
+                  "type": "boolean"
+                },
+                "original": {
+                  "type": "string"
+                },
+                "shorten": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/URL"
+            }
+          },
+          "500": {
+            "description": "internal error",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -82,7 +124,7 @@ func init() {
     }
   },
   "definitions": {
-    "error": {
+    "Error": {
       "type": "object",
       "required": [
         "message"
@@ -97,27 +139,18 @@ func init() {
         }
       }
     },
-    "principal": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "roles": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "url": {
+    "URL": {
       "type": "object",
       "required": [
         "original",
-        "isPublic"
+        "isPublic",
+        "shorten"
       ],
       "properties": {
+        "createdAt": {
+          "type": "string",
+          "readOnly": true
+        },
         "id": {
           "type": "string",
           "readOnly": true
@@ -130,6 +163,24 @@ func init() {
         },
         "shorten": {
           "type": "string"
+        },
+        "updatedAt": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "principal": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     }
@@ -165,13 +216,6 @@ func init() {
   "paths": {
     "/urls": {
       "get": {
-        "security": [
-          {
-            "hasRole": [
-              "customer"
-            ]
-          }
-        ],
         "tags": [
           "urls"
         ],
@@ -196,14 +240,63 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/url"
+                "$ref": "#/definitions/URL"
               }
             }
           },
           "default": {
             "description": "generic error response",
             "schema": {
-              "$ref": "#/definitions/error"
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "urls"
+        ],
+        "operationId": "createURL",
+        "parameters": [
+          {
+            "description": "the url",
+            "name": "url",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "original",
+                "isPublic",
+                "shorten"
+              ],
+              "properties": {
+                "isPublic": {
+                  "type": "boolean"
+                },
+                "original": {
+                  "type": "string"
+                },
+                "shorten": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/URL"
+            }
+          },
+          "500": {
+            "description": "internal error",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -211,7 +304,7 @@ func init() {
     }
   },
   "definitions": {
-    "error": {
+    "Error": {
       "type": "object",
       "required": [
         "message"
@@ -226,27 +319,18 @@ func init() {
         }
       }
     },
-    "principal": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "roles": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "url": {
+    "URL": {
       "type": "object",
       "required": [
         "original",
-        "isPublic"
+        "isPublic",
+        "shorten"
       ],
       "properties": {
+        "createdAt": {
+          "type": "string",
+          "readOnly": true
+        },
         "id": {
           "type": "string",
           "readOnly": true
@@ -259,6 +343,24 @@ func init() {
         },
         "shorten": {
           "type": "string"
+        },
+        "updatedAt": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "principal": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     }

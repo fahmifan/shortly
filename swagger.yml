@@ -19,10 +19,40 @@ securityDefinitions:
       customer: scope of registered customer
 paths:
   /urls:
+    post:
+      operationId: createURL
+      consumes:
+        - application/json
+      tags:
+        - urls
+      parameters:
+        - in: body
+          name: url
+          description: the url
+          schema:
+            type: object
+            required:
+              - original
+              - isPublic
+              - shorten
+            properties:
+              original:
+                type: string
+              isPublic:
+                type: boolean
+              shorten:
+                type: string
+      responses:
+        200:
+          description: ok
+          schema:
+            $ref: '#/definitions/URL'
+        500:
+          description: internal error
+          schema:
+            $ref: "#/definitions/Error"
     get:
       operationId: listURLs
-      security:
-        - hasRole: [ customer ]
       tags:
         - urls
       parameters:
@@ -40,13 +70,13 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/url"
+              $ref: "#/definitions/URL"
         default:
           description: generic error response
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/Error"
 definitions:
-  error:
+  Error:
     type: object
     required:
       - message
@@ -65,11 +95,12 @@ definitions:
         type: array 
         items: 
           type: string
-  url:
+  URL:
     type: object
     required:
       - original
       - isPublic
+      - shorten
     properties:
       id:
         type: string
@@ -80,3 +111,9 @@ definitions:
         type: string
       isPublic:
         type: boolean
+      createdAt:
+        type: string
+        readOnly: true
+      updatedAt:
+        type: string
+        readOnly: true

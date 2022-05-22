@@ -23,16 +23,16 @@ func main() {
 }
 
 func bootstrap() error {
-
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
-		return err
+		return fmt.Errorf("load swagger spec: %w", err)
 	}
+
 	api := operations.NewShortlyAPI(swaggerSpec)
 	server := restapi.NewServer(api)
 	defer closeErr(server.Shutdown)
 
-	db, err := sqlite.Open("shortly.db")
+	db, err := sqlite.Open("sqlitedb/shortly.db")
 	if err != nil {
 		return fmt.Errorf("open db: %w", err)
 	}
@@ -49,9 +49,11 @@ func bootstrap() error {
 	authHandler := &handlers.AuthHandler{}
 
 	api.UrlsListURLsHandler = urlHandler.List()
-	api.HasRoleAuth = func(token string, scopes []string) (interface{}, error) {
-		return authHandler.HasRole(token, scopes)
-	}
+	api.UrlsCreateURLHandler = urlHandler.Create()
+	_ = authHandler
+	// api.HasRoleAuth = func(token string, scopes []string) (interface{}, error) {
+	// 	return authHandler.HasRole(token, scopes)
+	// }
 
 	server.SetHandler(api.Serve(middleware.PassthroughBuilder))
 

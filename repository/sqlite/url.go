@@ -7,13 +7,15 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/fahmifan/shortly/ulids"
 	"github.com/oklog/ulid"
 	"gopkg.in/guregu/null.v4"
 )
 
 type actor struct {
-	CreatedBy ulid.ULID
-	UpdatedBy ulid.ULID
+	CreatedBy ulids.ULID
+	UpdatedBy ulids.ULID
+	DeletedBy ulids.Null
 }
 
 type timestamp struct {
@@ -27,10 +29,10 @@ type RowScanner interface {
 }
 
 type URL struct {
-	ID       ulid.ULID `json:"id,omitempty"`
-	IsPublic bool      `json:"isPublic"`
-	Original string    `json:"original"`
-	Shorten  string    `json:"shorten,omitempty"`
+	ID       ulids.ULID `json:"id,omitempty"`
+	IsPublic bool       `json:"isPublic"`
+	Original string     `json:"original"`
+	Shorten  string     `json:"shorten,omitempty"`
 	actor
 	timestamp
 }
@@ -100,7 +102,7 @@ func (u *URLRepository) Create(ctx context.Context, url *URL) error {
 			deleted_at
 		) 
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		ULIDStringValuer(url.ID),
+		url.ID,
 		url.IsPublic,
 		url.Original,
 		url.Shorten,
@@ -121,7 +123,7 @@ type ListFilter struct {
 	Cursor ulid.ULID
 }
 
-func (u *URLRepository) ListByUserID(ctx context.Context, userID ulid.ULID, filter ListFilter) ([]URL, error) {
+func (u *URLRepository) ListByUserID(ctx context.Context, userID ulids.ULID, filter ListFilter) ([]URL, error) {
 	rows, err := sq.Select(u.columns()...).From("urls").Where(sq.Eq{
 		"created_by": userID,
 		"deleted_at": nil,
