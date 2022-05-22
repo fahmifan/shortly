@@ -89,18 +89,18 @@ func (u *URLRepository) scanRows(rows *sql.Rows) (urls []URL, err error) {
 
 func (u *URLRepository) Create(ctx context.Context, url *URL) error {
 	_, err := sq.Insert("urls").Columns(u.columns()...).
-		RunWith(u.DB).
 		Values(
-			"id", url.ID,
-			"is_public", url.IsPublic,
-			"original", url.Original,
-			"shorten", url.Shorten,
-			"created_by", url.CreatedBy,
-			"updated_by", url.UpdatedBy,
-			"created_at", url.CreatedAt,
-			"updated_at", url.UpdatedAt,
+			url.ID,
+			url.IsPublic,
+			url.Original,
+			url.Shorten,
+			url.CreatedBy,
+			url.UpdatedBy,
+			url.CreatedAt,
+			url.UpdatedAt,
+			url.DeletedAt,
 		).
-		ExecContext(ctx)
+		RunWith(u.DB).ExecContext(ctx)
 	if err != nil {
 		return fmt.Errorf("create urls: %w", err)
 	}
