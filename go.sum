@@ -19,6 +19,8 @@ github.com/fahmifan/ulids v0.0.0-20220522023455-6a80cb26812f h1:jDl+N4wRZevaZswE
 github.com/fahmifan/ulids v0.0.0-20220522023455-6a80cb26812f/go.mod h1:4tzkbQPjEy6a5droadVO3DOys0VECUtmRRt4T2sjt0o=
 github.com/fahmifan/ulids v1.0.0 h1:1QjDwJjbNlbTfNJHvWZHWsH5ls+5BKRQ1l0/Ju7itFI=
 github.com/fahmifan/ulids v1.0.0/go.mod h1:yflA/L4Y7d46mWy408i4kfMsd+Q1FaKuA12++7ciFs0=
+github.com/fahmifan/ulids v1.0.1 h1:eCNEkN0JV6eqC6KXDWg37bX2iz7KcebuioKYmJu5YKQ=
+github.com/fahmifan/ulids v1.0.1/go.mod h1:yflA/L4Y7d46mWy408i4kfMsd+Q1FaKuA12++7ciFs0=
 github.com/go-openapi/analysis v0.21.2 h1:hXFrOYFHUAMQdu6zwAiKKJHJQ8kqZs1ux/ru1P1wLJU=
 github.com/go-openapi/analysis v0.21.2/go.mod h1:HZwRk4RRisyG8vx2Oe6aqeSQcoxRp47Xkp3+K6q+LdY=
 github.com/go-openapi/errors v0.19.8/go.mod h1:cM//ZKUKyO06HSwqAelJ5NsEMMcpa6VpXe8DOa1Mi1M=
